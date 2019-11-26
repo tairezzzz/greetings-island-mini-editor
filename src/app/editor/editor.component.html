@@ -37,7 +37,7 @@
   <div class="col-12">
     <div class="file-upload-btn btn btn-primary">
       Download
-      <input #file type="file" name="file" (change)="onFileChange(file.files)"/>
+      <input #file type="file" name="file" accept="image/jpeg,image/png" (change)="onFileChange(file.files)"/>
     </div>
   </div>
 </div>
