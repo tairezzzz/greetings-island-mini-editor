@@ -48,6 +48,7 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
     this.canvasElement = this.canvas.nativeElement;
     this.ctx = this.canvasElement.getContext('2d');
     this.ctx.globalCompositeOperation = 'destination-over';
+    this.setBackgroungColor();
   }
 
   ngOnInit(): void {
@@ -106,15 +107,28 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
 
   draw() {
     this.clearRect(this.ctx);
+
     if (this.textParams) {
       this.ctx.drawImage(this.textCanvas, 0, 0);
     }
     if (this.image) {
       this.ctx.drawImage(this.imageCanvas, 0, 0);
     }
+
+    this.setBackgroungColor();
   }
 
   clearRect(context: CanvasRenderingContext2D) {
     context.clearRect(0, 0, this.width, this.height);
+  }
+
+  setBackgroungColor(color = 'white') {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+
+  getBase64Url() {
+    const canvas = this.canvas.nativeElement;
+    return canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
   }
 }

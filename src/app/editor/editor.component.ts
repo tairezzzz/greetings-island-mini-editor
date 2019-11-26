@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CanvasComponent } from './canvas/canvas.component';
 
 @Component({
   selector: 'app-editor',
@@ -7,6 +8,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./editor.component.sass']
 })
 export class EditorComponent {
+  @ViewChild(CanvasComponent, {static: true})
+  canvasComponent: CanvasComponent;
+
   canvasTextParams: CanvasTextParamsInterface;
   canvasImage: File;
   canvasHeight = 700;
@@ -32,9 +36,15 @@ export class EditorComponent {
       return;
     }
     this.canvasTextParams = this.form.value;
+    this.form.reset();
   }
 
   onFileChange(fileList: FileList) {
     this.canvasImage = fileList.item(0);
   }
+
+  download(ev) {
+    ev.target.href = this.canvasComponent.getBase64Url();
+  }
+
 }
