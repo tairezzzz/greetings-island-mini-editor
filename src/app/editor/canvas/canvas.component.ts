@@ -1,16 +1,27 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.sass']
+  styleUrls: ['./canvas.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CanvasComponent implements AfterViewInit {
+export class CanvasComponent implements AfterViewInit, OnChanges {
   @Input()
   height = 700;
-
   @Input()
   width = 500;
+  @Input()
+  textParams: CanvasTextParamsInterface;
 
   @ViewChild('canvasElement', {static: false})
   private canvas: ElementRef;
@@ -21,14 +32,32 @@ export class CanvasComponent implements AfterViewInit {
     this.canvasElement = this.canvas.nativeElement;
     this.ctx = this.canvasElement.getContext('2d');
     this.ctx.globalCompositeOperation = 'destination-over';
+  }
 
-    this.setImage();
+  ngOnChanges(changes: SimpleChanges): void {
+    this.draw();
+  }
+
+  draw() {
     this.setText();
   }
 
+  clearRect() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  }
+
   setText() {
-    this.ctx.font = '30px Arial';
-    this.ctx.fillText('Hello World', 10, 50);
+    if (!this.textParams) {
+      return;
+    }
+    this.clearRect();
+
+    const {text, font, color, x, y, size} = this.textParams;
+    this.ctx.textAlign = 'start';
+    this.ctx.textBaseline = 'top';
+    this.ctx.font = `${size}px ${font}, sans-serif`;
+    this.ctx.fillStyle = color;
+    this.ctx.fillText(text, x, y);
   }
 
   setImage() {
