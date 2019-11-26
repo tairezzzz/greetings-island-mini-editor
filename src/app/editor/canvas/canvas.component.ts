@@ -67,11 +67,11 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
     const img = changes.image;
     const textParams = changes.textParams;
 
-    if (img && img.currentValue !== img.previousValue) {
+    if (img && img.currentValue && img.currentValue !== img.previousValue) {
       this.drawImage();
     }
 
-    if (textParams && textParams.currentValue !== textParams.previousValue) {
+    if (textParams && textParams.currentValue && textParams.currentValue !== textParams.previousValue) {
       this.drawText();
     }
   }
