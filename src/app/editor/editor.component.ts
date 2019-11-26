@@ -47,4 +47,9 @@ export class EditorComponent {
     ev.target.href = this.canvasComponent.getBase64Url();
   }
 
+  clear() {
+    this.canvasComponent.clear();
+    this.canvasTextParams = null;
+    this.canvasImage = null;
+  }
 }

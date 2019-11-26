@@ -131,4 +131,9 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
     const canvas = this.canvas.nativeElement;
     return canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
   }
+
+  clear() {
+    this.clearRect(this.ctx);
+    this.setBackgroungColor();
+  }
 }
