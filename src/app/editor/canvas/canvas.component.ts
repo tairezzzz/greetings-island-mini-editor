@@ -5,6 +5,8 @@ import {
   ElementRef,
   Input,
   OnChanges,
+  OnInit,
+  Renderer2,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -15,11 +17,11 @@ import {
   styleUrls: ['./canvas.component.sass'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CanvasComponent implements AfterViewInit, OnChanges {
+export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
   @Input()
-  height = 700;
+  height;
   @Input()
-  width = 500;
+  width;
   @Input()
   textParams: CanvasTextParamsInterface;
   @Input()
@@ -27,8 +29,20 @@ export class CanvasComponent implements AfterViewInit, OnChanges {
 
   @ViewChild('canvasElement', {static: false})
   private canvas: ElementRef;
+
   private canvasElement: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
+
+  private imageCanvas: HTMLCanvasElement;
+  private imageCtx: CanvasRenderingContext2D;
+
+  private textCanvas: HTMLCanvasElement;
+  private textCtx: CanvasRenderingContext2D;
+
+  constructor(
+    private renderer: Renderer2
+  ) {
+  }
 
   ngAfterViewInit(): void {
     this.canvasElement = this.canvas.nativeElement;
@@ -36,46 +50,71 @@ export class CanvasComponent implements AfterViewInit, OnChanges {
     this.ctx.globalCompositeOperation = 'destination-over';
   }
 
+  ngOnInit(): void {
+    /* virtual canvases - not appended to the DOM*/
+    this.imageCanvas = this.renderer.createElement('canvas');
+    this.imageCtx = this.imageCanvas.getContext('2d');
+    this.configVirtualCanvas(this.imageCanvas, this.imageCtx);
+
+    /* virtual canvases - not appended to the DOM*/
+    this.textCanvas = this.renderer.createElement('canvas');
+    this.textCtx = this.textCanvas.getContext('2d');
+    this.configVirtualCanvas(this.textCanvas, this.textCtx);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    const img = changes.image;
+    const textParams = changes.textParams;
+
+    if (img && img.currentValue !== img.previousValue) {
+      this.drawImage();
+    }
+
+    if (textParams && textParams.currentValue !== textParams.previousValue) {
+      this.drawText();
+    }
+  }
+
+  configVirtualCanvas(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+    canvas.height = this.height;
+    canvas.width = this.width;
+    context.fillRect(0, 0, this.width, this.height);
+  }
+
+  drawText() {
+    this.clearRect(this.textCtx);
+    const {text, font, color, x, y, size} = this.textParams;
+    this.textCtx.textAlign = 'start';
+    this.textCtx.textBaseline = 'top';
+    this.textCtx.font = `${size}px ${font}, sans-serif`;
+    this.textCtx.fillStyle = color;
+    this.textCtx.fillText(text, x, y);
+
     this.draw();
   }
 
-  draw() {
-    this.clearRect();
-    this.setText();
-    this.setImage();
-  }
-
-  clearRect() {
-    if (!this.ctx) {
-      return;
-    }
-    this.ctx.clearRect(0, 0, this.width, this.height);
-  }
-
-  setText() {
-    if (!this.textParams) {
-      return;
-    }
-
-    const {text, font, color, x, y, size} = this.textParams;
-    this.ctx.textAlign = 'start';
-    this.ctx.textBaseline = 'top';
-    this.ctx.font = `${size}px ${font}, sans-serif`;
-    this.ctx.fillStyle = color;
-    this.ctx.fillText(text, x, y);
-  }
-
-  setImage() {
-    if (!this.image) {
-      return;
-    }
-
+  drawImage() {
     const background = new Image();
     background.src = URL.createObjectURL(this.image);
     background.onload = () => {
-      this.ctx.drawImage(background, 0, 0);
+      this.clearRect(this.imageCtx);
+      this.imageCtx.drawImage(background, 0, 0);
+
+      this.draw();
     };
+  }
+
+  draw() {
+    this.clearRect(this.ctx);
+    if (this.textParams) {
+      this.ctx.drawImage(this.textCanvas, 0, 0);
+    }
+    if (this.image) {
+      this.ctx.drawImage(this.imageCanvas, 0, 0);
+    }
+  }
+
+  clearRect(context: CanvasRenderingContext2D) {
+    context.clearRect(0, 0, this.width, this.height);
   }
 }
