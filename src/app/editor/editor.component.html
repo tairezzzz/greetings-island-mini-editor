@@ -7,7 +7,7 @@
         </div>
         <div class="col has-error form-group">
           <select formControlName="font" class="form-control">
-            <option value="" disabled selected>Select Font</option>
+            <option [value]="null" disabled selected>Select Font</option>
             <option *ngFor="let font of fonts" [ngValue]="font">
               {{ font }}
             </option>
