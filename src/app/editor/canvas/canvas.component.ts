@@ -22,6 +22,8 @@ export class CanvasComponent implements AfterViewInit, OnChanges {
   width = 500;
   @Input()
   textParams: CanvasTextParamsInterface;
+  @Input()
+  image: File;
 
   @ViewChild('canvasElement', {static: false})
   private canvas: ElementRef;
@@ -35,14 +37,20 @@ export class CanvasComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
     this.draw();
   }
 
   draw() {
+    this.clearRect();
     this.setText();
+    this.setImage();
   }
 
   clearRect() {
+    if (!this.ctx) {
+      return;
+    }
     this.ctx.clearRect(0, 0, this.width, this.height);
   }
 
@@ -50,7 +58,6 @@ export class CanvasComponent implements AfterViewInit, OnChanges {
     if (!this.textParams) {
       return;
     }
-    this.clearRect();
 
     const {text, font, color, x, y, size} = this.textParams;
     this.ctx.textAlign = 'start';
@@ -61,8 +68,12 @@ export class CanvasComponent implements AfterViewInit, OnChanges {
   }
 
   setImage() {
+    if (!this.image) {
+      return;
+    }
+
     const background = new Image();
-    background.src = 'http://placehold.it/500x700';
+    background.src = URL.createObjectURL(this.image);
     background.onload = () => {
       this.ctx.drawImage(background, 0, 0);
     };

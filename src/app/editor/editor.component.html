@@ -31,7 +31,15 @@
       </div>
     </form>
   </div>
+  <div class="col-12 pb-3">
+    <app-canvas [height]="canvasHeight" [width]="canvasWidth" [textParams]="canvasTextParams" [image]="canvasImage"></app-canvas>
+  </div>
   <div class="col-12">
-    <app-canvas [height]="canvasHeight" [width]="canvasWidth" [textParams]="canvasTextParams"></app-canvas>
+    <div class="file-upload-btn btn btn-primary">
+      Download
+      <input #file type="file" name="file" (change)="onFileChange(file.files)"/>
+    </div>
   </div>
 </div>
+
+

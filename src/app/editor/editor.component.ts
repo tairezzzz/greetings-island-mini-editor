@@ -8,6 +8,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class EditorComponent {
   canvasTextParams: CanvasTextParamsInterface;
+  canvasImage: File;
   canvasHeight = 700;
   canvasWidth = 500;
   fonts = [
@@ -26,21 +27,14 @@ export class EditorComponent {
     size: new FormControl(20, [Validators.required, Validators.min(0), Validators.max(50)]),
   });
 
-  // ngOnInit() {
-  //   this.form.setValue({
-  //     text: 'ad',
-  //     font: 'Josefin Sans',
-  //     color: '#333333',
-  //     x: 15,
-  //     y: 15,
-  //     size: 20
-  //   });
-  // }
-
   onSubmit() {
     if (this.form.invalid) {
       return;
     }
     this.canvasTextParams = this.form.value;
+  }
+
+  onFileChange(fileList: FileList) {
+    this.canvasImage = fileList.item(0);
   }
 }
