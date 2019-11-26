@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-canvas',
@@ -6,8 +6,11 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
   styleUrls: ['./canvas.component.sass']
 })
 export class CanvasComponent implements AfterViewInit {
-  canvasHeight = 700;
-  canvasWidth = 500;
+  @Input()
+  height = 700;
+
+  @Input()
+  width = 500;
 
   @ViewChild('canvasElement', {static: false})
   private canvas: ElementRef;

@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./editor.component.sass']
 })
 export class EditorComponent {
-  title = 'mini-editor';
+  canvasHeight = 700;
+  canvasWidth = 500;
 }
