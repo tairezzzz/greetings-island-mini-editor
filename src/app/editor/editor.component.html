@@ -1,1 +1,37 @@
-<app-canvas [height]="canvasHeight" [width]="canvasWidth"></app-canvas>
+<div class="row">
+  <div class="col-12 pb-3">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="col">
+          <input formControlName="text" type="text" class="form-control" placeholder="Insert Text">
+        </div>
+        <div class="col has-error form-group">
+          <select formControlName="font" class="form-control">
+            <option value="" disabled selected>Select Font</option>
+            <option *ngFor="let font of fonts" [ngValue]="font">
+              {{ font }}
+            </option>
+          </select>
+        </div>
+        <div class="col">
+          <input formControlName="color" type="text" class="form-control" placeholder="Select #Hex color">
+        </div>
+        <div class="col">
+          <input formControlName="x" type="text" class="form-control" placeholder="X">
+        </div>
+        <div class="col">
+          <input formControlName="y" type="text" class="form-control" placeholder="Y">
+        </div>
+        <div class="col">
+          <input formControlName="size" type="text" class="form-control" placeholder="Size">
+        </div>
+        <div class="col">
+          <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-12">
+    <app-canvas [height]="canvasHeight" [width]="canvasWidth"></app-canvas>
+  </div>
+</div>
