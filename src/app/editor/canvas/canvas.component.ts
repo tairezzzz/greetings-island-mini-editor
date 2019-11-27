@@ -23,9 +23,17 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
   @Input()
   width;
   @Input()
-  textParams: CanvasTextParamsInterface;
-  @Input()
   image: File;
+  @Input()
+  set textParams(value: CanvasTextParamsInterface) {
+    if (!value) {
+      return;
+    }
+    this.allTextParams.push(value);
+    this.drawText();
+  }
+
+  allTextParams: CanvasTextParamsInterface[] = [];
 
   @ViewChild('canvasElement', {static: false})
   private canvas: ElementRef;
@@ -65,14 +73,9 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     const img = changes.image;
-    const textParams = changes.textParams;
 
     if (img && img.currentValue && img.currentValue !== img.previousValue) {
       this.drawImage();
-    }
-
-    if (textParams && textParams.currentValue && textParams.currentValue !== textParams.previousValue) {
-      this.drawText();
     }
   }
 
@@ -84,13 +87,14 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
 
   drawText() {
     this.clearRect(this.textCtx);
-    const {text, font, color, x, y, size} = this.textParams;
-    this.textCtx.textAlign = 'start';
-    this.textCtx.textBaseline = 'top';
-    this.textCtx.font = `${size}px ${font}, sans-serif`;
-    this.textCtx.fillStyle = color;
-    this.textCtx.fillText(text, x, y);
-
+    this.allTextParams.forEach(textParams => {
+      const {text, font, color, x, y, size} = textParams;
+      this.textCtx.textAlign = 'start';
+      this.textCtx.textBaseline = 'top';
+      this.textCtx.font = `${size}px ${font}, sans-serif`;
+      this.textCtx.fillStyle = color;
+      this.textCtx.fillText(text, x, y);
+    });
     this.draw();
   }
 
@@ -108,7 +112,7 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
   draw() {
     this.clearRect(this.ctx);
 
-    if (this.textParams) {
+    if (this.allTextParams.length) {
       this.ctx.drawImage(this.textCanvas, 0, 0);
     }
     if (this.image) {
@@ -133,7 +137,13 @@ export class CanvasComponent implements AfterViewInit, OnChanges, OnInit {
   }
 
   clear() {
+    this.allTextParams = [];
     this.clearRect(this.ctx);
     this.setBackgroungColor();
+  }
+
+  deleteText(i: number) {
+    this.allTextParams.splice(i, 1);
+    this.drawText();
   }
 }

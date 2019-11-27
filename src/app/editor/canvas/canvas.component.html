@@ -1,2 +1,8 @@
-<canvas #canvasElement [width]="width" [height]="height"></canvas>
+<ul class="list-group mb-3" *ngFor="let item of allTextParams; index as i;">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>{{item.text}}</span>
+    <button type="button" class="btn btn-danger badge-pill" (click)="deleteText(i)">Delete</button>
+  </li>
+</ul>
 
+<canvas #canvasElement [width]="width" [height]="height"></canvas>
